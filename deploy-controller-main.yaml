@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller-main
+spec:
+  selector:
+    matchLabels:
+      app: controller-main
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: controller-main
+    spec:
+      containers:
+        - name: controller-main
+          image: attsun/sample-controller-main:latest

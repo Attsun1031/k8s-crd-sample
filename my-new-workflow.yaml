@@ -1,0 +1,8 @@
+apiVersion: "workflow.com/v1beta"
+kind: Workflow
+metadata:
+  name: my-new-workflow
+spec:
+  name: my-new-workflow-name
+  status:
+    name: init
