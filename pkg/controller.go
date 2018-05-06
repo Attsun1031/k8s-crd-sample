@@ -36,7 +36,7 @@ const (
 // Controller is the controller implementation for Workflow resources
 type Controller struct {
 	kubeclientset     kubernetes.Interface
-	jobnetesClientset clientset.Interface
+	workflowClientset clientset.Interface
 
 	workflowLister listers.WorkflowLister
 	workflowSynced cache.InformerSynced
@@ -55,11 +55,11 @@ type Controller struct {
 // NewController returns a new sample controller
 func NewController(
 	kubeclientset kubernetes.Interface,
-	jobnetesClientset clientset.Interface,
-	jobnetesInformerFactory informers.SharedInformerFactory) *Controller {
+	workflowClientset clientset.Interface,
+	workflowInformerFactory informers.SharedInformerFactory) *Controller {
 
 	// obtain references to shared index informers for the Workflow types.
-	wfInformer := jobnetesInformerFactory.Workflow().V1beta().Workflows()
+	wfInformer := workflowInformerFactory.Workflow().V1beta().Workflows()
 
 	// Create event broadcaster
 	// Add controller types to the default Kubernetes Scheme so Events can be logged for controller types.
@@ -73,7 +73,7 @@ func NewController(
 
 	controller := &Controller{
 		kubeclientset:     kubeclientset,
-		jobnetesClientset: jobnetesClientset,
+		workflowClientset: workflowClientset,
 		workflowLister:    wfInformer.Lister(),
 		workflowSynced:    wfInformer.Informer().HasSynced,
 		workqueue:         workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "Workflows"),
@@ -248,6 +248,6 @@ func (c *Controller) updateWorkflowStatus(wf *workflowv1beta.Workflow) error {
 	// we must use Update instead of UpdateStatus to update the Status block of the Workflow resource.
 	// UpdateStatus will not allow changes to the Spec of the resource,
 	// which is ideal for ensuring nothing other than resource status has been updated.
-	_, err := c.jobnetesClientset.WorkflowV1beta().Workflows(wf.Namespace).Update(wfCopy)
+	_, err := c.workflowClientset.WorkflowV1beta().Workflows(wf.Namespace).Update(wfCopy)
 	return err
 }
